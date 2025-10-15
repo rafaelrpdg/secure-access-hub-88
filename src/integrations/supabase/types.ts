@@ -52,6 +52,30 @@ export type Database = {
           },
         ]
       }
+      pages: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          route: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          route: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          route?: string
+        }
+        Relationships: []
+      }
       password_reset_tokens: {
         Row: {
           created_at: string
@@ -139,6 +163,42 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "two_factor_codes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_page_permissions: {
+        Row: {
+          created_at: string
+          id: string
+          page_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          page_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          page_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_page_permissions_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_page_permissions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
