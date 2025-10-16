@@ -3,9 +3,17 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { LogOut, Clock, User } from "lucide-react";
+import { LogOut, Clock, User, LayoutDashboard, UserPlus, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 interface Profile {
   full_name: string;
@@ -14,6 +22,7 @@ interface Profile {
 
 export function SessionHeader() {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [sessionTime, setSessionTime] = useState<Date | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
@@ -99,22 +108,40 @@ export function SessionHeader() {
           )}
           
           <div className="flex items-center gap-3">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-medium">{profile.full_name}</p>
-              <p className="text-xs text-muted-foreground">{user.email}</p>
-            </div>
-            
-            <Avatar className="h-9 w-9 border-2 border-primary">
-              <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name} />
-              <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-            
-            <Button variant="outline" size="sm" onClick={signOut}>
-              <LogOut className="h-4 w-4" />
-              <span className="ml-2 hidden sm:inline">Sair</span>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                  <div className="text-right hidden sm:block">
+                    <p className="text-sm font-medium">{profile.full_name}</p>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                  </div>
+                  
+                  <Avatar className="h-9 w-9 border-2 border-primary">
+                    <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name} />
+                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-card">
+                <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  <span>Dashboard</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/admin/users/new')}>
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  <span>Registrar</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={signOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sair</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
